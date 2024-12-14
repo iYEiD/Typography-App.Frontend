@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { message, Typography } from 'antd';
+import { message, Typography, Button, Image } from 'antd';
+import axios from 'axios';
 
 const { Title, Text } = Typography;
 
 const HomePage: React.FC = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
+    const [file, setFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     useEffect(() => {
         const validateToken = () => {
@@ -42,6 +45,48 @@ const HomePage: React.FC = () => {
         validateToken();
     }, [navigate]);
 
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = event.target.files?.[0];
+        if (selectedFile) {
+            setFile(selectedFile);
+            
+            // Create a preview URL for the selected image
+            const objectUrl = URL.createObjectURL(selectedFile);
+            setPreviewUrl(objectUrl);
+        }
+    };
+
+    const handleUpload = async () => {
+        if (!file) {
+            message.error('Please select an image to upload.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const response = await axios.post('http://localhost:5165/api/ai/upload-image', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            const data = response.data;
+            console.log(data);
+            message.success('Image uploaded successfully!');
+            
+            // Clean up: remove the preview and cached file
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+                setPreviewUrl(null);
+            }
+            setFile(null);
+        } catch (error) {
+            message.error('Error uploading image');
+        }
+    };
+
     return (
         <div style={{ 
             padding: '50px',
@@ -51,6 +96,31 @@ const HomePage: React.FC = () => {
         }}>
             <Title level={2}>Welcome back!</Title>
             <Text>You are logged in as {username}</Text>
+            <div style={{ marginTop: '20px' }}>
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    style={{ display: 'inline-block' }}
+                />
+                <Button
+                    type="primary"
+                    onClick={handleUpload}
+                    style={{ marginLeft: '10px' }}
+                    disabled={!file}
+                >
+                    Upload Image
+                </Button>
+            </div>
+            {previewUrl && (
+                <div style={{ marginTop: '20px', maxWidth: '300px', margin: '20px auto' }}>
+                    <Image
+                        src={previewUrl}
+                        alt="Preview"
+                        style={{ maxWidth: '100%' }}
+                    />
+                </div>
+            )}
         </div>
     );
 };

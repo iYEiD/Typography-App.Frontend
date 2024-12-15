@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-// import { signup } from '../services/authService';
+import { signup } from '../services/authService';
 import { 
   Form, 
   Input, 
@@ -46,30 +45,19 @@ const SignupPage: React.FC = () => {
   const onFinish = async (values: any) => {
     setIsLoading(true);
     try {
-      const response = await axios.post('/api/auth/signup', {
-        username: values.username,
-        email: values.email,
-        password: values.password
-      });
+      await signup(values.username, values.email, values.password);
 
       message.success('Signup successful!');
-      // TODO: Implement redirect or further actions
-      console.log('Signup successful', response.data);
+      window.location.href = '/login';
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const errorMsg = error.response?.data?.message || 'Signup failed';
-        message.error(errorMsg);
-      } else {
-        message.error('An unexpected error occurred');
-      }
+      message.error('Email already exists');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGoogleSignup = () => {
-    // Redirect to backend Google OAuth endpoint
-    window.location.href = '/api/auth/google-signup';
+    window.location.href = 'http://localhost:5165/api/auth/signin-google';
   };
 
   return (
@@ -172,7 +160,5 @@ const SignupPage: React.FC = () => {
     </div>
   );
 };
-
-
 
 export default SignupPage; 

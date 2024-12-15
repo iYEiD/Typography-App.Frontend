@@ -36,17 +36,14 @@ const LoginPage: React.FC = () => {
       // Redirect to home page
       window.location.href = '/home';
     } catch (error) {
- 
-        message.error('Incorrect email or password');
-     
+      message.error('Incorrect email or password');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGoogleLogin = () => {
-    // Redirect to backend Google OAuth login endpoint
-    window.location.href = '/api/auth/google-login';
+    window.location.href = 'http://localhost:5165/api/auth/signin-google';
   };
 
   return (

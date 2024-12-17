@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { message, Typography, Button, Image } from 'antd';
+import { message, Typography, Button, Image, Upload } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const HomePage: React.FC = () => {
     const navigate = useNavigate();
-    const [username, setUsername] = useState('');
     const [file, setFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -23,19 +23,12 @@ const HomePage: React.FC = () => {
             }
 
             try {
-                // Decode JWT payload
                 const payload = JSON.parse(atob(token.split('.')[1]));
-
-                // Check if token has expired
                 const isTokenExpired = payload.exp * 1000 < Date.now();
                 if (isTokenExpired) {
                     throw new Error('Token expired');
                 }
-
-                // Set username from token payload
-                setUsername(payload.email || 'User');
             } catch (error) {
-                // If token is invalid or expired, remove it and redirect
                 localStorage.removeItem('authToken');
                 message.error('Invalid token, please login again');
                 navigate('/login');
@@ -45,15 +38,10 @@ const HomePage: React.FC = () => {
         validateToken();
     }, [navigate]);
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = event.target.files?.[0];
-        if (selectedFile) {
-            setFile(selectedFile);
-            
-            // Create a preview URL for the selected image
-            const objectUrl = URL.createObjectURL(selectedFile);
-            setPreviewUrl(objectUrl);
-        }
+    const handleFileChange = (file: File) => {
+        setFile(file);
+        const objectUrl = URL.createObjectURL(file);
+        setPreviewUrl(objectUrl);
     };
 
     const handleUpload = async () => {
@@ -63,12 +51,20 @@ const HomePage: React.FC = () => {
         }
 
         const formData = new FormData();
-        formData.append('image', file);
+        formData.append('file', file);
+
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            message.error('No authentication token found. Please login again.');
+            navigate('/login');
+            return;
+        }
 
         try {
-            const response = await axios.post('http://localhost:5165/api/ai/upload-image', formData, {
+            const response = await axios.post('http://localhost:5165/api/image/upload', formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
@@ -76,7 +72,6 @@ const HomePage: React.FC = () => {
             console.log(data);
             message.success('Image uploaded successfully!');
             
-            // Clean up: remove the preview and cached file
             if (previewUrl) {
                 URL.revokeObjectURL(previewUrl);
                 setPreviewUrl(null);
@@ -87,33 +82,52 @@ const HomePage: React.FC = () => {
         }
     };
 
+    const beforeUpload = (file: File) => {
+        const isImage = file.type.startsWith('image/');
+        if (!isImage) {
+            message.error('You can only upload image files!');
+        }
+        return isImage;
+    };
+
     return (
         <div style={{ 
             padding: '50px',
             textAlign: 'center',
             backgroundColor: '#f0f2f5',
-            minHeight: '100vh'
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center'
         }}>
-            <Title level={2}>Welcome back!</Title>
-            <Text>You are logged in as {username}</Text>
-            <div style={{ marginTop: '20px' }}>
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    style={{ display: 'inline-block' }}
-                />
-                <Button
-                    type="primary"
-                    onClick={handleUpload}
-                    style={{ marginLeft: '10px' }}
-                    disabled={!file}
-                >
-                    Upload Image
-                </Button>
+            <div style={{ marginBottom: '20px' }}>
+                <Title level={2}>Upload Your Images!</Title>
+                <div style={{ marginTop: '20px' }}>
+                    <Upload
+                        beforeUpload={(file) => {
+                            if (beforeUpload(file)) {
+                                handleFileChange(file);
+                            }
+                            return false;
+                        }}
+                        showUploadList={false}
+                    >
+                        <Button icon={<UploadOutlined />} style={{ marginRight: '10px' }}>
+                            Select Image
+                        </Button>
+                    </Upload>
+                    <Button
+                        type="primary"
+                        onClick={handleUpload}
+                        disabled={!file}
+                    >
+                        Upload Image
+                    </Button>
+                </div>
             </div>
             {previewUrl && (
-                <div style={{ marginTop: '20px', maxWidth: '300px', margin: '20px auto' }}>
+                <div style={{ marginTop: '20px', maxWidth: '600px', margin: '20px auto' }}>
                     <Image
                         src={previewUrl}
                         alt="Preview"

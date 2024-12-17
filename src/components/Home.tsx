@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { message, Typography, Button, Image, Upload } from 'antd';
+import { message, Typography, Button, Image, Upload, Spin } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -10,6 +10,7 @@ const HomePage: React.FC = () => {
     const navigate = useNavigate();
     const [file, setFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         const validateToken = () => {
@@ -60,6 +61,7 @@ const HomePage: React.FC = () => {
             return;
         }
 
+        setLoading(true);
         try {
             const response = await axios.post('http://localhost:5165/api/image/upload', formData, {
                 headers: {
@@ -79,6 +81,8 @@ const HomePage: React.FC = () => {
             setFile(null);
         } catch (error) {
             message.error('Error uploading image');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -92,6 +96,7 @@ const HomePage: React.FC = () => {
 
     return (
         <div style={{ 
+            position: 'relative',
             padding: '50px',
             textAlign: 'center',
             backgroundColor: '#f0f2f5',
@@ -101,7 +106,7 @@ const HomePage: React.FC = () => {
             justifyContent: 'center',
             alignItems: 'center'
         }}>
-            <div style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: '20px', zIndex: 1 }}>
                 <Title level={2}>Upload Your Images!</Title>
                 <div style={{ marginTop: '20px' }}>
                     <Upload
@@ -113,21 +118,37 @@ const HomePage: React.FC = () => {
                         }}
                         showUploadList={false}
                     >
-                        <Button icon={<UploadOutlined />} style={{ marginRight: '10px' }}>
+                        <Button icon={<UploadOutlined />} style={{ marginRight: '10px' }} disabled={loading}>
                             Select Image
                         </Button>
                     </Upload>
                     <Button
                         type="primary"
                         onClick={handleUpload}
-                        disabled={!file}
+                        disabled={!file || loading}
                     >
                         Upload Image
                     </Button>
                 </div>
             </div>
+            {loading && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 2
+                }}>
+                    <Spin size="large" />
+                </div>
+            )}
             {previewUrl && (
-                <div style={{ marginTop: '20px', maxWidth: '600px', margin: '20px auto' }}>
+                <div style={{ marginTop: '20px', maxWidth: '600px', margin: '20px auto', zIndex: 1 }}>
                     <Image
                         src={previewUrl}
                         alt="Preview"

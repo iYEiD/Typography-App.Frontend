@@ -1,15 +1,27 @@
 import React from 'react';
 import { Layout, Menu, Button } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const { Header, Footer, Content } = Layout;
 
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleLogout = () => {
         localStorage.removeItem('authToken');
         navigate('/login');
+    };
+
+    const getSelectedKey = () => {
+        switch (location.pathname) {
+            case '/search':
+                return '1';
+            case '/upload':
+                return '2';
+            default:
+                return '1';
+        }
     };
 
     return (
@@ -18,12 +30,12 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <div className="logo" style={{ float: 'left', color: 'white', fontSize: '20px', fontWeight: 'bold', marginRight: '20px' }}>
                     SnapSearch 
                 </div>
-                <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']} style={{ flex: 1 }}>
+                <Menu theme="dark" mode="horizontal" selectedKeys={[getSelectedKey()]} style={{ flex: 1 }}>
                     <Menu.Item key="1">
-                        <Link to="/home">Home</Link>
+                        <Link to="/search">Search</Link>
                     </Menu.Item>
                     <Menu.Item key="2">
-                        <Link to="/search">Search</Link>
+                        <Link to="/upload">Upload</Link>
                     </Menu.Item>
                     <Menu.Item key="3" style={{ marginLeft: 'auto' }}>
                         <Button type="primary" danger onClick={handleLogout}>

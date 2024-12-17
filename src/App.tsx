@@ -18,9 +18,10 @@ const App = () => {
           <Route path="/" element={<Navigate to="/signup" />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/home" element={<AppLayout><HomePage /></AppLayout>} />
+          <Route path="/home" element={<Navigate to="/search" />} />
           <Route path="/callback" element={<Callback />} />
           <Route path="/search" element={<AppLayout><Search /></AppLayout>} />
+          <Route path="/upload" element={<AppLayout><HomePage /></AppLayout>} />
         </Routes>
       </div>
 

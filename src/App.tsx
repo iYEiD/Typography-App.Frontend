@@ -5,8 +5,8 @@ import LoginPage from './components/Login';
 import HomePage from './components/Home';
 import Callback from './components/Callback';
 import Search from './components/Search';
-import { Header } from 'antd/es/layout/layout';
 import AppLayout from './components/AppLayout';
+import Metadata from './components/Metadata';
 
 const App = () => {
   return (
@@ -22,6 +22,7 @@ const App = () => {
           <Route path="/callback" element={<Callback />} />
           <Route path="/search" element={<AppLayout><Search /></AppLayout>} />
           <Route path="/upload" element={<AppLayout><HomePage /></AppLayout>} />
+          <Route path="/metadata" element={<AppLayout><Metadata /></AppLayout>} />
         </Routes>
       </div>
 

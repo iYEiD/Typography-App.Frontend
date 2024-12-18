@@ -19,6 +19,8 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 return '1';
             case '/upload':
                 return '2';
+            case '/metadata':
+                return '3';
             default:
                 return '1';
         }
@@ -37,7 +39,10 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     <Menu.Item key="2">
                         <Link to="/upload">Upload</Link>
                     </Menu.Item>
-                    <Menu.Item key="3" style={{ marginLeft: 'auto' }}>
+                    <Menu.Item key="3">
+                        <Link to="/metadata">Metadata</Link>
+                    </Menu.Item>
+                    <Menu.Item key="4" style={{ marginLeft: 'auto' }}>
                         <Button type="primary" danger onClick={handleLogout}>
                             Logout
                         </Button>

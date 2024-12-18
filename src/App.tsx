@@ -7,6 +7,7 @@ import Callback from './components/Callback';
 import Search from './components/Search';
 import AppLayout from './components/AppLayout';
 import Metadata from './components/Metadata';
+import ContextFinder from './components/ContextFinder';
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="/search" element={<AppLayout><Search /></AppLayout>} />
           <Route path="/upload" element={<AppLayout><HomePage /></AppLayout>} />
           <Route path="/metadata" element={<AppLayout><Metadata /></AppLayout>} />
+          <Route path="/context-finder" element={<AppLayout><ContextFinder /></AppLayout>} />
         </Routes>
       </div>
 

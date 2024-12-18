@@ -21,6 +21,8 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 return '2';
             case '/metadata':
                 return '3';
+            case '/context-finder':
+                return '4';
             default:
                 return '1';
         }
@@ -42,7 +44,10 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     <Menu.Item key="3">
                         <Link to="/metadata">Metadata</Link>
                     </Menu.Item>
-                    <Menu.Item key="4" style={{ marginLeft: 'auto' }}>
+                    <Menu.Item key="4">
+                        <Link to="/context-finder">Context Finder</Link>
+                    </Menu.Item>
+                    <Menu.Item key="5" style={{ marginLeft: 'auto' }}>
                         <Button type="primary" danger onClick={handleLogout}>
                             Logout
                         </Button>

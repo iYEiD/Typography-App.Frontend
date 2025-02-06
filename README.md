@@ -1,21 +1,23 @@
-## 🚀 About Me
-I'm currently a student with [Get Coding](http://www.get-coding.ca) completing Full Stack Development.
+# Typography
+Typography is a web application designed to help users upload and search for images using AI-powered descriptions. It allows users to describe images based on the content (scenes, people, or historical events), and those descriptions are indexed for easy retrieval. The app integrates AI models to analyze images and ElasticSearch to provide fast, full-text search results.
 
-This ReactJs testing clone of Amazon front end ecom website.
+# Features
+- Image Upload: Users can upload images they want to store and search.
+- AI-Powered Descriptions: AI models analyze images to describe the scene, people, and even identify if the image is related to historical events.
+- Search Functionality: Search for images by typing in a description. ElasticSearch is used to quickly retrieve images based on the descriptions stored.
+- Secure Storage: Uploaded images are stored in a Minio-based object storage system, ensuring reliable and scalable storage.
+- Dockerized: The app is containerized using Docker for easy deployment and scalability.
 
-### `npm start`
+# Tech Stack
+- Frontend: React
+- Backend: .NET C# (ASP.NET Core)
+- Containerization: Docker
+- Object Storage: Minio (for storing images)
+- Search Engine: ElasticSearch API (for indexing and searching descriptions)
+- AI Models: Used for image recognition and generating descriptive text (OPENAI & GEMINI)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-## Authors
-
-- [@millerm30](https://www.github.com/millerm30)
-<h3 align="left">Connect with me:</h3>
-<p align="left">
-<a href="https://twitter.com/millerm30" target="blank"><img align="center" src="https://github.com/millerm30/todo/blob/main/images/twitter.svg" alt="millerm30" height="30" width="40" /></a>
-<a href="https://linkedin.com/in/michael-miller-0aa2bb229" target="blank"><img align="center" src="https://github.com/millerm30/todo/blob/main/images/linked-in-alt.svg" alt="millerm30" height="30" width="40" /></a>
-</p>
+# How It Works
+- Upload an Image: Users upload their beloved image via the frontend interface.
+- Image Analysis: Once uploaded, AI models are used to analyze the image. The system detects the scene, identifies people, and checks for any historical events.
+- Description Storage: If a historical event is identified, the description is stored in ElasticSearch for later search.
+- Search for Images: Users can search for images by typing a description of the scene, person, or event, and the app will return relevant results based on the stored descriptions.
